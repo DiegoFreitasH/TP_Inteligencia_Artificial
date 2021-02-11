@@ -48,8 +48,9 @@ def main():
 
     puzzle_problem = Problem(initial_state, Action, goal, puzzle_trasition, puzzle_goal_test, puzzle_step_cost)
     
-    result = uniform_cost_search(puzzle_problem)
+    # result = uniform_cost_search(puzzle_problem)
     result = a_star_search(puzzle_problem, h_pieces_out_of_place)
+    # result = breath_first_search(puzzle_problem)
 
     if(result):
         for node in result:

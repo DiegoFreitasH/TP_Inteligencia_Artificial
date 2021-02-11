@@ -22,6 +22,30 @@ def solution(node: Node) -> List[Node]:
     solution.insert(0, node)
     return solution
 
+def breath_first_search(problem: Problem) -> List[Node]:
+    initial_node = Node(problem.initial_state, None, None, 0)
+
+    border = []
+    border.append(initial_node)
+
+    explored = set()
+    i = 0
+    while(len(border) > 0):
+        node = border.pop(0)
+
+        if(problem.goal_test(node.state, problem.goal)):
+            print(f"Num. of iterations: {i}")
+            return solution(node)
+        
+        explored.add(node.state)
+
+        for action in problem.actions:
+            child = CHILD_NODE(problem, node, action)
+            if(not child):
+                continue
+            if(child not in border and child not in explored):
+                border.append(child)
+        i += 1
 def uniform_cost_search(problem: Problem) -> List[Node]:
     initial_node = Node(problem.initial_state, None, None, 0)
 
