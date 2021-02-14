@@ -4,39 +4,29 @@ import random
 import operator
 import numpy as np
 
-def CREATE_NODE(state: State, problem):
-    pass
+def annealing_schedule(t_fraction: float):
+    return max(10**-6, min(1, 1 - t_fraction))
 
-def annealing_schedule(t: int):
-    pass
+def simulated_annealing(problem: Problem, f, state, num_iter=10):
+    current = state
 
-def simulated_annealing(problem: Problem):
-    pass
+    for t in range(num_iter):
+        T = annealing_schedule((t+1)/num_iter)
+        action = random.choice(problem.actions(current))
+        new_state = problem.result(current, action)
+        
+        delta_e = f(new_state) - f(state)
+        if(delta_e >= 0 or (random.random() <= math.e**(delta_e / T))):
+            current = new_state
 
-def random_selection(population, adapt_func) -> State:
-    fitness_sum = 0
-    partial_sum = 0
-
-    for ind in population:
-        fitness_sum += ind.value
-
-    wheel = np.random.randint(low=1, high=fitness_sum+1)
-    
-    i = np.random.randint(low=len(population))
-    while(partial_sum < wheel):
-        if(i >= len(population)):
-            i = 0
-        partial_sum += population[i].value
-        i += 1
-    
-    return population[i-1] 
+    return current
 
 def reproduction(x: State, y: State) -> State:
     cross_point = np.random.randint(low=1, high=len(x.data)-1)
     x_gene = x.data[:cross_point]
     y_gene = y.data[cross_point:]
 
-    child = State(x_gene + y_gene)
+    child = State(np.concatenate((x_gene, y_gene), axis=0))
     
     return child
 
@@ -64,9 +54,8 @@ def genetic_algorithm(population: list, weights: list, multability, adapt_func, 
             print("  Population:",len(population)) 
             print("  Childs:",len(population) - keep_n)
             print("  Parents:", keep_n)
-            print("  Parents Fitness:", [p.value-1 for p in new_population])
             best_child = max(population, key=lambda x: x.value)
-            print("  Best Child:", best_child.value-1)
+            print("  Best Child:", best_child.value)
         
         # Decreases the mutability be the end of the algorithm
         if(i > 2*num_of_iter//3):

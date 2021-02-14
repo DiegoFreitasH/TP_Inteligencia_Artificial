@@ -1,12 +1,12 @@
 from enum import Enum
-
+import numpy as np
 
 class Action(Enum):
-    UP = 1
-    DOWN = -1
+    UP = -1
+    DOWN = 1
 
 class State:
-    def __init__(self, data: list):
+    def __init__(self, data: np.ndarray):
         self.data = data
 
     def __repr__(self):
