@@ -46,18 +46,17 @@ def breath_first_search(problem: Problem) -> List[Node]:
             if(child not in border and child not in explored):
                 border.append(child)
         i += 1
+
 def uniform_cost_search(problem: Problem) -> List[Node]:
     initial_node = Node(problem.initial_state, None, None, 0)
 
-    border = []
-    border.append((initial_node.path_cost, initial_node))
-    heapq.heapify(border)
+    border = PriorityQueue([(initial_node.path_cost, initial_node)])
     
     explored = set()
 
     i = 0
-    while(len(border) > 0):
-        _, node = heapq.heappop(border)
+    while(not border.empty()):
+        _, node = border.pop()
 
         if(problem.goal_test(node.state, problem.goal)):
             print(f"Num. Of Iterations: {i}")
@@ -71,14 +70,14 @@ def uniform_cost_search(problem: Problem) -> List[Node]:
             if(not child):
                 continue
             
-            border_pos, border_node = IN_BORDER(border, child.state)
+            border_pos, border_node = border.search(child.state)
             
             if(not border_node and child.state not in explored):
-                heapq.heappush(border, (child.path_cost ,child))
+                border.push((child.path_cost ,child))
             
             elif(border_node and child.path_cost > border[border_pos][0]):
-                border[border_pos] = (child.path_cost, child)
-                heapq.heapify(border)
+                border.replace(border_pos, (child.path_cost, child))
+        
         i += 1
     return None
 
@@ -90,14 +89,13 @@ def a_star_search(problem: Problem, heuristic):
     initial_node = Node(problem.initial_state, None, None, 0)
 
     border = []
-    border.append((initial_node.path_cost, initial_node))
-    heapq.heapify(border)
+    border = PriorityQueue([(initial_node.path_cost, initial_node)])
     
     explored = set()
 
     i = 0
-    while(len(border) > 0):
-        _, node = heapq.heappop(border)
+    while(not border.empty()):
+        _, node = border.pop()
 
         # print(node)
         # print(border)
@@ -118,12 +116,12 @@ def a_star_search(problem: Problem, heuristic):
             child.h_value = heuristic(child.state)
             child.f_value = child.h_value + child.path_cost
             
-            border_pos, border_node = IN_BORDER(border, child.state)
+            border_pos, border_node = border.search(child.state)
+            
             if(not border_node and child.state not in explored):
-                heapq.heappush(border, (child.f_value ,child))
+                border.push((child.f_value ,child))
             
             elif(border_node and child.f_value > border[border_pos][0]):
-                border[border_pos] = (child.f_value, child)
-                heapq.heapify(border)
+                border.replace(border_pos, (child.f_value, child))
         i += 1
     return None
