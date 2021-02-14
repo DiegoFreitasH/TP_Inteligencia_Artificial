@@ -1,11 +1,37 @@
 from enum import Enum
 from typing import List
+import heapq
 
 class Action(Enum):
     RIGHT = 1
     LEFT = -1
     UP = -3
     DOWN = 3
+
+class PriorityQueue:
+
+    def __init__(self, data: list):
+        self.data = data
+        heapq.heapify(self.data)
+    
+    def push(self, item):
+        heapq.heappush(self.data, item)
+    
+    def pop(self):
+        return heapq.heappop(self.data)
+    
+    def empty(self):
+        return len(self.data) == 0
+
+    def search(self, state):
+        for i, (_, node) in enumerate(self.data):
+            if(node.state == state):
+                return i, node
+        return None, None
+    
+    def replace(self, index, item):
+        self.data[index] = item
+        heapq.heapify(self.data)
 
 class State():
     
