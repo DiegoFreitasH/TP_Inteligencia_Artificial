@@ -22,7 +22,7 @@ def simulated_annealing(problem: Problem, f, state, num_iter=10):
     return current
 
 def reproduction(x: State, y: State) -> State:
-    cross_point = np.random.randint(low=2, high=len(x.data)-2)
+    cross_point = np.random.randint(low=0, high=len(x.data))
     x_gene = x.data[:cross_point]
     y_gene = y.data[cross_point:]
 
@@ -57,10 +57,6 @@ def genetic_algorithm(population: list, weights: list, multability, adapt_func, 
             print("  Parents:", keep_n)
             best_child = max(population, key=lambda x: x.value)
             print("  Best Child:", best_child.value)
-        
-        # Decreases the mutability be the end of the algorithm
-        # if(i > 2*num_of_iter//3):
-            # multability *= 0.9
         
         for _ in range(len(population) - keep_n):
 

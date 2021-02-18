@@ -1,4 +1,5 @@
 import random
+import argparse
 import numpy as np
 from numba import jit
 from lib import *
@@ -51,8 +52,8 @@ def adapt_func(state: State):
 
     if(n == 0):
         return float("infinity")
-    return 1.0/float(n)**4
-    # return len(state.data) - n + 1
+    else:
+        return 1.0/2**float(n)
 
 def generate_inital_population(lenght: int, n: int):
     population = []
@@ -66,7 +67,9 @@ def generate_inital_population(lenght: int, n: int):
 
 def print_population(population: list, print_board: bool):
     for _, ind in enumerate(population):
-        print("State:", ind.state, "Fitness Value:", ind.value)
+        print("State:", ind.state)
+        print("Fitness Value:", ind.value)
+        print("Num. Attacked Queens:", num_of_attacked_queens(ind.state.data))
         
         if(print_board):
             for j in range(len(ind.state.data)):
@@ -78,16 +81,58 @@ def print_population(population: list, print_board: bool):
                 print()
             print()
 
-def main():
+def main(population_size=500, board_size=40, mutability=0.4, max_generations=1500):
     
-    BOARD_SIZE = 40
-    POPULATION_SIZE = 500
-    population = generate_inital_population(POPULATION_SIZE, BOARD_SIZE)
+    population = generate_inital_population(population_size, board_size)
 
     weights = [ind.value for ind in population]
-    solution = genetic_algorithm(population, weights, 0.4, adapt_func, 1500, BOARD_SIZE, DEBUG=False)
+    solution = genetic_algorithm(population, weights, mutability, adapt_func, max_generations, board_size, DEBUG=True)
 
+    print("Solution: ")
     print_population([solution], False)
 
 if __name__ == '__main__':
-    main()
+
+    parser = argparse.ArgumentParser(
+        description="Program to solve the queens puzzle. The higher the fitness value the closer to a solution. Solution have fitness value of 'inf'"
+    )
+
+    parser.add_argument(
+        '--population-size',
+        metavar='p_size',
+        default=300,
+        type=int,
+        required=False,
+        help='Size of the population per generation'
+    )
+    parser.add_argument(
+        '--board-size',
+        metavar='b_size',
+        default=40,
+        type=int,
+        required=False,
+        help='Size of the board'
+    )
+    parser.add_argument(
+        '--mutability',
+        default=0.4,
+        type=float,
+        required=False,
+        help='Rate of mutation'
+    )
+    parser.add_argument(
+        '--max-generation',
+        default=float('infinity'),
+        type=int,
+        required=False,
+        help='Max number of generations'
+    )
+
+    args = parser.parse_args()
+
+    population_size = args.population_size
+    board_size = args.board_size
+    mutability = args.mutability
+    max_generation = args.max_generation
+
+    main(population_size, board_size, mutability, max_generation)
