@@ -22,7 +22,7 @@ def simulated_annealing(problem: Problem, f, state, num_iter=10):
     return current
 
 def reproduction(x: State, y: State) -> State:
-    cross_point = np.random.randint(low=1, high=len(x.data)-1)
+    cross_point = np.random.randint(low=2, high=len(x.data)-2)
     x_gene = x.data[:cross_point]
     y_gene = y.data[cross_point:]
 
@@ -38,18 +38,19 @@ def mutation(child: State) -> State:
     child.data[pos] = value
     return child
 
-def genetic_algorithm(population: list, weights: list, multability, adapt_func, num_of_iter=10, solution_threshold=None):
+def genetic_algorithm(population: list, weights: list, multability, adapt_func, num_of_iter=10, solution_threshold=1.0, DEBUG=False):
     
     keep_n = len(population)//10
 
-    for i in range(num_of_iter):
+    i = 0
+    while(i  < num_of_iter):
 
         new_population = []
 
         # Keep [keep_n] indviduos of the last generation
         new_population.extend(random.choices(population, weights=weights, k=keep_n-len(new_population)))
 
-        if(True):
+        if(DEBUG):
             print("Iter:",i)
             print("  Population:",len(population)) 
             print("  Childs:",len(population) - keep_n)
@@ -58,20 +59,22 @@ def genetic_algorithm(population: list, weights: list, multability, adapt_func, 
             print("  Best Child:", best_child.value)
         
         # Decreases the mutability be the end of the algorithm
-        if(i > 2*num_of_iter//3):
-            multability *= 0.1
+        # if(i > 2*num_of_iter//3):
+            # multability *= 0.9
         
-        for k in range(len(population) - keep_n):
+        for _ in range(len(population) - keep_n):
 
             x = random.choices(population, weights=weights)[0]
             y = random.choices(population, weights=weights)[0] 
 
+
             child_state = reproduction(x.state, y.state)
             
-            if(np.random.random() <= multability):
+            p = random.random()
+            if(p < multability):
                 child_state = mutation(child_state)
             
-            child = Node(child_state, adapt_func(child_state))
+            child = Node(child_state, adapt_func(child_state.data))
 
             if(solution_threshold and child.value >= solution_threshold):
                 return child
@@ -81,6 +84,7 @@ def genetic_algorithm(population: list, weights: list, multability, adapt_func, 
     
         population = new_population[:]
         weights = [indv.value for indv in population]
+        i += 1
 
     best_child = max(population, key=lambda x: x.value)
     return best_child

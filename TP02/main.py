@@ -1,5 +1,6 @@
 import random
 import numpy as np
+from numba import jit
 from lib import *
 from structurs import *
 
@@ -22,9 +23,10 @@ def queens_transition(state: State, action):
     new_state.data[i] += move.value
     return new_state
 
-def num_of_attacked_queens(state: State):
+@jit(nopython=True)
+def num_of_attacked_queens(board: list):
     n = 0
-    board = state.data
+
     is_attacked = [False for i in range(len(board))]
 
     for x, y in enumerate(board):
@@ -57,13 +59,13 @@ def generate_inital_population(lenght: int, n: int):
 
     for _ in range(lenght):
         state = State(np.random.randint(low=n, size=n))
-        ind = Node(state, adapt_func(state))
+        ind = Node(state, adapt_func(state.data))
         population.append(ind)
     
     return population
 
 def print_population(population: list, print_board: bool):
-    for i, ind in enumerate(population):
+    for _, ind in enumerate(population):
         print("State:", ind.state, "Fitness Value:", ind.value)
         
         if(print_board):
@@ -78,12 +80,12 @@ def print_population(population: list, print_board: bool):
 
 def main():
     
-    board_size = 40
-    population_size = 300
-    population = generate_inital_population(population_size, board_size)
+    BOARD_SIZE = 40
+    POPULATION_SIZE = 500
+    population = generate_inital_population(POPULATION_SIZE, BOARD_SIZE)
 
     weights = [ind.value for ind in population]
-    solution = genetic_algorithm(population, weights, 0.3, adapt_func, 1500, board_size)
+    solution = genetic_algorithm(population, weights, 0.4, adapt_func, 1500, BOARD_SIZE, DEBUG=False)
 
     print_population([solution], False)
 
