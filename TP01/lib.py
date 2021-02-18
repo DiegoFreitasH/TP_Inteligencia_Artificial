@@ -55,7 +55,7 @@ def uniform_cost_search(problem: Problem) -> List[Node]:
     explored = set()
 
     i = 0
-    while(not border.empty()):
+    while(not border.empty() and i < 10**3):
         _, node = border.pop()
 
         if(problem.goal_test(node.state, problem.goal)):
@@ -97,10 +97,6 @@ def a_star_search(problem: Problem, heuristic):
     while(not border.empty()):
         _, node = border.pop()
 
-        # print(node)
-        # print(border)
-        # input()
-
         if(problem.goal_test(node.state, problem.goal)):
             print(f"Num. Of Iterations: {i}")
             return solution(node)
@@ -121,7 +117,7 @@ def a_star_search(problem: Problem, heuristic):
             if(not border_node and child.state not in explored):
                 border.push((child.f_value ,child))
             
-            elif(border_node and child.f_value > border[border_pos][0]):
+            elif(border_node and child.f_value > border.get(border_pos)[0]):
                 border.replace(border_pos, (child.f_value, child))
         i += 1
     return None

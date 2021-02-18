@@ -14,6 +14,9 @@ class PriorityQueue:
         self.data = data
         heapq.heapify(self.data)
     
+    def get(self, index):
+        return self.data[index]
+
     def push(self, item):
         heapq.heappush(self.data, item)
     
