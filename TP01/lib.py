@@ -30,7 +30,7 @@ def breath_first_search(problem: Problem) -> List[Node]:
 
     explored = set()
     i = 0
-    while(len(border) > 0):
+    while(len(border) > 0 and i < 10**4):
         node = border.pop(0)
 
         if(problem.goal_test(node.state, problem.goal)):
@@ -46,6 +46,7 @@ def breath_first_search(problem: Problem) -> List[Node]:
             if(child not in border and child not in explored):
                 border.append(child)
         i += 1
+    return None
 
 def uniform_cost_search(problem: Problem) -> List[Node]:
     initial_node = Node(problem.initial_state, None, None, 0)
@@ -55,7 +56,7 @@ def uniform_cost_search(problem: Problem) -> List[Node]:
     explored = set()
 
     i = 0
-    while(not border.empty() and i < 10**3):
+    while(not border.empty() and i < 1000):
         _, node = border.pop()
 
         if(problem.goal_test(node.state, problem.goal)):
@@ -85,7 +86,7 @@ def evaluation_function(node: Node, heuristic):
     heuristic_value = heuristic(node.state)
     return heuristic_value + node.path_cost
 
-def a_star_search(problem: Problem, heuristic):
+def a_star_search(problem: Problem, heuristic) -> List[Node]:
     initial_node = Node(problem.initial_state, None, None, 0)
 
     border = []
@@ -94,7 +95,7 @@ def a_star_search(problem: Problem, heuristic):
     explored = set()
 
     i = 0
-    while(not border.empty()):
+    while(not border.empty() and i < 10**4):
         _, node = border.pop()
 
         if(problem.goal_test(node.state, problem.goal)):

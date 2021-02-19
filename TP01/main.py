@@ -37,7 +37,7 @@ def h_pieces_out_of_place(state: State) -> int:
             value += 1
     return value
 
-def main(puzzle, algorithm):
+def main(puzzle: list, algorithm: str):
     goal = State([1,2,3,4,5,6,7,8,0], 8)
 
     initial_state = State(
@@ -56,11 +56,12 @@ def main(puzzle, algorithm):
     
 
     if(result):
+        print("Algorithm:", algo.upper())
         print("Solution: ")
         for node in result:
             print(f"\t{node}")
     else:
-        print("No Solution Found")
+        print("Max. Iterations Reached: No Solution Found")
 
 if __name__ == '__main__':
 
