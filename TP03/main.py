@@ -58,8 +58,10 @@ def main():
         "Class"
     ]
 
+    print("Loading dataset")
     dataset = pd.read_csv(path, names=header, na_values=["?"]).dropna()
 
+    print("Defining X and Y")
     Y = dataset["Class"].to_numpy()
     Y = np.array(list(map(lambda x: (x-2)/2, Y)))
 
@@ -67,17 +69,18 @@ def main():
     X = normalize(X)
     X = np.concatenate([np.ones(shape=[X.shape[0], 1]), X], axis=1)
 
-
+    print("Defining train and test samples")
     x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=42)
 
+    print("Appling Logistic Regression")
     W = logistic_regression(y_train, x_train, alpha=0.01, num_of_iter=10**3)
 
     predictions = predict(y_test, x_test, W)
-
-    print("Acccuracy:", accuracy_score(y_test, predictions))
-    print("Precision:", precision_score(y_test, predictions))
-    print("Reacall:", recall_score(y_test, predictions))
-    print("F1 Score:", f1_score(y_test, predictions))
+    print("Result of Test Samples:")
+    print("  Acccuracy:", accuracy_score(y_test, predictions))
+    print("  Precision:", precision_score(y_test, predictions))
+    print("  Reacall:", recall_score(y_test, predictions))
+    print("  F1 Score:", f1_score(y_test, predictions))
 
 if __name__ == '__main__':
     main()
